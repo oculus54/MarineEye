@@ -8,7 +8,12 @@
 
 Object detection model that identifies oil spills in images using YOLOv11, trained on the [oil-detection-2](https://universe.roboflow.com/yolo-m1lny/oil-detection-2) dataset from Roboflow Universe.
 
-![Oil Spill Detection Demo](static\results\result_a70e23d6a0584b67adb685cc853a05df_Screenshot 2026-09-08 232104.png)
+<table>
+  <tr>
+    <td><img src="static\results\result_a70e23d6a0584b67adb685cc853a05df_Screenshot 2026-09-08 232104.png" width="100%"></td>
+    <td><img src="static\results\result_e567743ae5fe4406b2ede2e368bbbbe5_1001_jpg.rf.53ec514edd3b316bc5862a36f35c3c73.jpg" width="100%"></td>
+  </tr>
+</table>
 
 ## Overview
 
