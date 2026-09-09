@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+{% block title %}Detect{% endblock %}
+
+{% block content %}
+<section class="detect-section">
+    <div class="section-header">
+        <h1 class="section-title">Oil Spill Detection</h1>
+        <p class="section-subtitle">Upload an image to detect oil spills using our YOLOv11 model</p>
+    </div>
+
+    <div class="detect-layout">
+        <!-- Upload Panel -->
+        <div class="upload-panel glass-card" id="upload-panel">
+            <form method="POST" enctype="multipart/form-data" action="{{ url_for('main.detect') }}" id="detect-form">
+                <div class="dropzone" id="dropzone">
+                    <div class="dropzone-content" id="dropzone-content">
+                        <div class="dropzone-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                        </div>
+                        <p class="dropzone-title">Drop your image here</p>
+                        <p class="dropzone-hint">or click to browse &middot; JPG, PNG, WEBP</p>
+                    </div>
+                    <img class="dropzone-preview" id="dropzone-preview" alt="Preview" style="display:none;">
+                    <input type="file" name="image" accept="image/*" required id="file-input" class="file-input">
+                </div>
+
+                <div class="upload-controls">
+                    <div class="conf-slider-group">
+                        <label for="conf-slider" class="slider-label">
+                            Confidence Threshold
+                            <span class="slider-value" id="conf-value">0.25</span>
+                        </label>
+                        <input type="range" name="confidence" min="0.05" max="0.95" step="0.05" value="0.25" class="conf-slider" id="conf-slider">
+                        <div class="slider-range">
+                            <span>0.05</span>
+                            <span>0.95</span>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg btn-full" id="detect-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        Run Detection
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Results Panel -->
+        <div class="results-panel" id="results-panel">
+            {% if result_image %}
+            <div class="result-card glass-card animate-in">
+                <div class="result-header">
+                    <h2 class="result-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        Detection Result
+                    </h2>
+                    {% if detections %}
+                    <span class="result-badge">{{ detections|length }} detection{{ 's' if detections|length != 1 }}</span>
+                    {% else %}
+                    <span class="result-badge no-detect">No detections</span>
+                    {% endif %}
+                </div>
+
+                <div class="result-image-wrap">
+                    <img src="{{ result_image }}" alt="Detection result" class="result-image" id="result-img">
+                </div>
+
+                {% if detections %}
+                <div class="detections-table-wrap">
+                    <table class="detections-table" id="detections-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Class</th>
+                                <th>Confidence</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for d in detections %}
+                            <tr>
+                                <td class="td-num">{{ loop.index }}</td>
+                                <td>
+                                    <span class="class-badge {{ 'oil' if d.cls == 'oil' else 'no-oil' }}">{{ d.cls }}</span>
+                                </td>
+                                <td>
+                                    <div class="conf-bar-wrap">
+                                        <div class="conf-bar" style="width: {{ (d.conf * 100)|round|int }}%"></div>
+                                        <span class="conf-text">{{ "%.1f"|format(d.conf * 100) }}%</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if d.conf >= 0.7 %}
+                                    <span class="status-dot high"></span> High
+                                    {% elif d.conf >= 0.4 %}
+                                    <span class="status-dot medium"></span> Medium
+                                    {% else %}
+                                    <span class="status-dot low"></span> Low
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="no-detections-msg">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    <p>No oil spills detected in this image.</p>
+                    <span class="no-detect-hint">The image appears clean — no oil regions above the confidence threshold.</span>
+                </div>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="empty-results glass-card">
+                <div class="empty-icon">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                </div>
+                <h3 class="empty-title">No Results Yet</h3>
+                <p class="empty-desc">Upload an image using the panel on the left to get started with oil spill detection.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Drag & drop + preview
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('file-input');
+    const preview = document.getElementById('dropzone-preview');
+    const content = document.getElementById('dropzone-content');
+
+    dropzone.addEventListener('click', () => fileInput.click());
+
+    dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('drag-over');
+    });
+
+    dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('drag-over');
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('drag-over');
+        if (e.dataTransfer.files.length) {
+            fileInput.files = e.dataTransfer.files;
+            showPreview(e.dataTransfer.files[0]);
+        }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length) {
+            showPreview(e.target.files[0]);
+        }
+    });
+
+    function showPreview(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+            content.style.display = 'none';
+            dropzone.classList.add('has-file');
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // Confidence slider
+    const slider = document.getElementById('conf-slider');
+    const confValue = document.getElementById('conf-value');
+    slider.addEventListener('input', () => {
+        confValue.textContent = parseFloat(slider.value).toFixed(2);
+    });
+
+    // Form submit loading state
+    const form = document.getElementById('detect-form');
+    const detectBtn = document.getElementById('detect-btn');
+    form.addEventListener('submit', () => {
+        detectBtn.disabled = true;
+        detectBtn.innerHTML = `
+            <svg class="spinner" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+            Analyzing...
+        `;
+    });
+</script>
+{% endblock %}

@@ -11,7 +11,7 @@ Object detection model that identifies oil spills in images using YOLOv11, train
 <table>
   <tr>
     <td><img src="static/results/result_a70e23d6a0584b67adb685cc853a05df_Screenshot 2026-09-08 232104.png" width="100%"></td>
-    <td><img src="static/results/result_e567743ae5fe4406b2ede2e368bbbbe5_1001_jpg.rf.53ec514edd3b316bc5862a36f35c3c73.jpg" width="100%"></td>
+    <td><img src="static/results/result_4ae1b2618a5b47b99085510ea9c4ca1e_Screenshot_2026-09-08_231853.png" width="100%"></td>
   </tr>
 </table>
 

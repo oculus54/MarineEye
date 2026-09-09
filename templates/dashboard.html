@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<section class="dashboard-section">
+    <div class="section-header">
+        <h1 class="section-title">Detection Dashboard</h1>
+        <p class="section-subtitle">Browse all past oil spill detection results</p>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="dash-stats-row">
+        <div class="dash-stat glass-card">
+            <div class="dash-stat-icon blue">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+            <div class="dash-stat-info">
+                <span class="dash-stat-value">{{ total_scans }}</span>
+                <span class="dash-stat-label">Total Scans</span>
+            </div>
+        </div>
+        <div class="dash-stat glass-card">
+            <div class="dash-stat-icon red">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div class="dash-stat-info">
+                <span class="dash-stat-value">{{ spill_detected }}</span>
+                <span class="dash-stat-label">Spills Detected</span>
+            </div>
+        </div>
+        <div class="dash-stat glass-card">
+            <div class="dash-stat-icon green">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div class="dash-stat-info">
+                <span class="dash-stat-value">{{ clean_scans }}</span>
+                <span class="dash-stat-label">Clean Scans</span>
+            </div>
+        </div>
+    </div>
+
+    {% if records|length > 0 %}
+    <!-- Detection Records Grid -->
+    <div class="records-grid" id="records-grid">
+        {% for record in records %}
+        <div class="record-card glass-card" id="record-{{ loop.index }}">
+            <div class="record-image-wrap">
+                <img src="{{ record.result_image }}" alt="Detection {{ loop.index }}" class="record-image" loading="lazy">
+                <div class="record-overlay">
+                    <a href="{{ record.result_image }}" target="_blank" class="overlay-btn" title="View full size">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+                    </a>
+                </div>
+                {% if record.detections|length > 0 %}
+                <span class="record-tag spill">🛢️ {{ record.detections|length }} detection{{ 's' if record.detections|length != 1 }}</span>
+                {% else %}
+                <span class="record-tag clean">✅ Clean</span>
+                {% endif %}
+            </div>
+            <div class="record-body">
+                <div class="record-meta">
+                    <span class="record-filename" title="{{ record.filename }}">{{ record.filename }}</span>
+                    <span class="record-date">{{ record.timestamp }}</span>
+                </div>
+                {% if record.detections|length > 0 %}
+                <div class="record-detections">
+                    {% for d in record.detections %}
+                    <div class="mini-detection">
+                        <span class="class-badge {{ 'oil' if d.cls == 'oil' else 'no-oil' }} small">{{ d.cls }}</span>
+                        <div class="mini-conf-bar-wrap">
+                            <div class="mini-conf-bar" style="width: {{ (d.conf * 100)|round|int }}%"></div>
+                        </div>
+                        <span class="mini-conf-text">{{ "%.0f"|format(d.conf * 100) }}%</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            <div class="record-footer">
+                <form method="POST" action="{{ url_for('main.delete_record', record_id=record.id) }}" class="delete-form">
+                    <button type="submit" class="btn btn-delete btn-sm" title="Delete this record" onclick="return confirm('Delete this detection record?')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-dashboard glass-card">
+        <div class="empty-icon">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        </div>
+        <h3 class="empty-title">No Detection Records</h3>
+        <p class="empty-desc">Run your first detection to see results here.</p>
+        <a href="{{ url_for('main.detect') }}" class="btn btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Start Detection
+        </a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

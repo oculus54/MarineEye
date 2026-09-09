@@ -1,0 +1,57 @@
+[
+  {
+    "id": "4ae1b2618a5b47b99085510ea9c4ca1e",
+    "filename": "Screenshot_2026-09-08_231853.png",
+    "upload_image": "/static/uploads/4ae1b2618a5b47b99085510ea9c4ca1e_Screenshot_2026-09-08_231853.png",
+    "result_image": "/static/results/result_4ae1b2618a5b47b99085510ea9c4ca1e_Screenshot_2026-09-08_231853.png",
+    "detections": [
+      {
+        "cls": "oil",
+        "conf": 0.4880649149417877
+      }
+    ],
+    "confidence_threshold": 0.25,
+    "timestamp": "2026-09-09 17:22"
+  },
+  {
+    "id": "632651bf202141399a141f7de2f505a5",
+    "filename": "Screenshot_2026-09-08_002819.png",
+    "upload_image": "/static/uploads/632651bf202141399a141f7de2f505a5_Screenshot_2026-09-08_002819.png",
+    "result_image": "/static/results/result_632651bf202141399a141f7de2f505a5_Screenshot_2026-09-08_002819.png",
+    "detections": [],
+    "confidence_threshold": 0.25,
+    "timestamp": "2026-09-09 17:21"
+  },
+  {
+    "id": "c78384711dc8498c8b0ec894bdb8cb89",
+    "filename": "Screenshot_2026-09-08_231818.png",
+    "upload_image": "/static/uploads/c78384711dc8498c8b0ec894bdb8cb89_Screenshot_2026-09-08_231818.png",
+    "result_image": "/static/results/result_c78384711dc8498c8b0ec894bdb8cb89_Screenshot_2026-09-08_231818.png",
+    "detections": [],
+    "confidence_threshold": 0.25,
+    "timestamp": "2026-09-09 17:21"
+  },
+  {
+    "id": "e7cf9304af6545de800d49ea41638c0e",
+    "filename": "Screenshot_2026-09-08_232104.png",
+    "upload_image": "/static/uploads/e7cf9304af6545de800d49ea41638c0e_Screenshot_2026-09-08_232104.png",
+    "result_image": "/static/results/result_e7cf9304af6545de800d49ea41638c0e_Screenshot_2026-09-08_232104.png",
+    "detections": [
+      {
+        "cls": "oil",
+        "conf": 0.5209512114524841
+      }
+    ],
+    "confidence_threshold": 0.25,
+    "timestamp": "2026-09-09 17:20"
+  },
+  {
+    "id": "4caa713ec09644f0ae63e136afdd31e1",
+    "filename": "Screenshot_2026-09-08_232035.png",
+    "upload_image": "/static/uploads/4caa713ec09644f0ae63e136afdd31e1_Screenshot_2026-09-08_232035.png",
+    "result_image": "/static/results/result_4caa713ec09644f0ae63e136afdd31e1_Screenshot_2026-09-08_232035.png",
+    "detections": [],
+    "confidence_threshold": 0.25,
+    "timestamp": "2026-09-09 17:20"
+  }
+]
