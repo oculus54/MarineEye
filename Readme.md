@@ -32,7 +32,7 @@ This project fine-tunes a YOLOv11 model to classify and localize oil spills, dis
 
 The dataset is heavily imbalanced toward the `oil` class (2,794 instances vs. 96 for `no-oil`), and bounding boxes cluster around the image center with a strong bias toward full-width/full-height boxes.
 
-<img src="assets/labels.jpg" width="70%">
+<img src="static/ass/labels.jpg" width="70%">
 
 This imbalance is the main thing to keep in mind when interpreting results below — the model has seen far more `oil` examples than `no-oil` ones.
 
