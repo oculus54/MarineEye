@@ -115,7 +115,3 @@ Then open `http://localhost:5000` in your browser, upload an image, and view the
 ```bash
 pip install ultralytics roboflow flask opencv-python
 ```
-
-## License
-
-Dataset licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
